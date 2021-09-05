@@ -1,8 +1,13 @@
 package controller
 
-import "github.com/gin-gonic/gin"
+import (
+	"fmt"
+	"github.com/gin-gonic/gin"
+	"github.com/teoferizovic/senator/model"
+)
 
 func UserLogin(c *gin.Context) {
+	fmt.Println(model.GetUsers())
 	c.String(200, "login")
 }
 
