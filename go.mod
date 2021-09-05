@@ -2,4 +2,7 @@ module github.com/teoferizovic/senator
 
 go 1.13
 
-require github.com/gin-gonic/gin v1.7.4
+require (
+	github.com/gin-gonic/gin v1.7.4
+	github.com/spf13/viper v1.8.1
+)
