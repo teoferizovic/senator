@@ -1,11 +1,6 @@
 package config
 
-import (
-	"github.com/spf13/viper"
-	"log"
-)
-
-func GetEnvData(key string) string {
+/*func GetEnvData(key string) string {
 
 	// SetConfigFile explicitly defines the path, name and extension of the config file.
 	// Viper will use this and not check any of the config paths.
@@ -32,4 +27,4 @@ func GetEnvData(key string) string {
 	}
 
 	return value
-}
+}*/
