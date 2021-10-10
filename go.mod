@@ -5,6 +5,7 @@ go 1.13
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.7.4
+	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/kr/pretty v0.1.0 // indirect

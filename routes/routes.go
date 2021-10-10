@@ -12,8 +12,13 @@ func Routes(router *gin.Engine){
 	{
 		user.POST("/register", controller.UserRegister)
 		user.POST("/login", controller.UserLogin)
-		//user.PUT("/logout", controller.UserLogout)
+		user.PUT("/logout", controller.UserLogout)
 		user.GET("/index",middleware.AuthMiddleware(), controller.UserIndex)
+	}
+
+	post := router.Group("/post", middleware.AuthMiddleware())
+	{
+		post.GET("/index",controller.UserIndex)
 	}
 
 }

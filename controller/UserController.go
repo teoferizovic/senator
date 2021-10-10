@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/teoferizovic/senator/database"
 	"github.com/teoferizovic/senator/model"
 	"github.com/teoferizovic/senator/service"
 	"golang.org/x/crypto/bcrypt"
@@ -92,15 +94,18 @@ func UserLogin(ctx *gin.Context) {
 
 }
 
-/*func UserLogout(ctx *gin.Context) {
+func UserLogout(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Logged out",
 	})
 	return
-}*/
+}
 
 func UserIndex(ctx *gin.Context) {
+
+	pong, err := database.Redis.Ping().Result()
+	fmt.Println(pong, err)
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Index",
