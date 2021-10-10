@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/teoferizovic/senator/database"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
@@ -70,4 +71,11 @@ func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 func MakePassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	return string(bytes), err
+}
+
+var JwtKey = []byte("my_secret_key")
+
+type Claims struct {
+	Email string `json:"email"`
+	jwt.StandardClaims
 }

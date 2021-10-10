@@ -3,18 +3,10 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/teoferizovic/senator/model"
+	"github.com/teoferizovic/senator/service"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
-	"time"
-	"github.com/dgrijalva/jwt-go"
 )
-
-var jwtKey = []byte("my_secret_key")
-
-type Claims struct {
-	Email string `json:"email"`
-	jwt.StandardClaims
-}
 
 func UserRegister(ctx *gin.Context) {
 
@@ -77,24 +69,14 @@ func UserLogin(ctx *gin.Context) {
 		return
 	}
 
-	// Declare the expiration time of the token
-	// here, we have kept it as 5 minutes
-	expirationTime := time.Now().Add(5 * time.Minute)
-
-	// Create the JWT claims, which includes the username and expiry time
-	claims := &Claims{
-		Email: requestUser.Email,
-		StandardClaims: jwt.StandardClaims{
-			// In JWT, the expiry time is expressed as unix milliseconds
-			ExpiresAt: expirationTime.Unix(),
-		},
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Wrong credentials",
+		})
+		return
 	}
 
-	// Declare the token with the algorithm used for signing, and the claims
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	// Create the JWT string
-	tokenString, err := token.SignedString(jwtKey)
+	tokenString, err := service.CreateToken(requestUser)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -112,22 +94,6 @@ func UserLogin(ctx *gin.Context) {
 
 /*func UserLogout(ctx *gin.Context) {
 
-	claims := &Claims{}
-
-	// Now, create a new token for the current use, with a renewed expiration time
-	expirationTime := time.Now().Add(5 * time.Minute)
-	claims.ExpiresAt = expirationTime.Unix()
-	token := jwt.NewWithClaims(nil, claims)
-
-	_, err := token.SignedString(jwtKey)
-
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Internal ServerError",
-		})
-		return
-	}
-
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Logged out",
 	})
@@ -135,40 +101,6 @@ func UserLogin(ctx *gin.Context) {
 }*/
 
 func UserIndex(ctx *gin.Context) {
-
-	// Get the JWT string from the cookie
-	tknStr := ctx.Request.Header.Get("Authentication")
-
-	// Initialize a new instance of `Claims`
-	claims := &Claims{}
-
-	// Parse the JWT string and store the result in `claims`.
-	// Note that we are passing the key in this method as well. This method will return an error
-	// if the token is invalid (if it has expired according to the expiry time we set on sign in),
-	// or if the signature does not match
-	tkn, err := jwt.ParseWithClaims(tknStr, claims, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
-	})
-
-	if err != nil {
-		if err == jwt.ErrSignatureInvalid {
-			ctx.JSON(http.StatusUnauthorized, gin.H{
-				"message": "Unauthorized",
-			})
-			return
-		}
-		ctx.JSON(http.StatusBadRequest, gin.H{
-			"message": "Unauthorized",
-		})
-		return
-	}
-
-	if !tkn.Valid {
-		ctx.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Unauthorized",
-		})
-		return
-	}
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Index",
