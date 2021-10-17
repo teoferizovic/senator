@@ -4,6 +4,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/teoferizovic/senator/model"
+	"github.com/teoferizovic/senator/service"
 	"net/http"
 )
 
@@ -39,6 +40,14 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		if !tkn.Valid {
+			respondWithError(ctx, http.StatusUnauthorized, "Unauthorized")
+			return
+		}
+
+		//check if token exist in blacklist
+		ok,err := service.GetTokenFromBlackList(tknStr)
+
+		if (err != nil || ok) {
 			respondWithError(ctx, http.StatusUnauthorized, "Unauthorized")
 			return
 		}

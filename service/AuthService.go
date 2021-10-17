@@ -2,6 +2,8 @@ package service
 
 import (
 	"github.com/dgrijalva/jwt-go"
+	"github.com/go-redis/redis"
+	"github.com/teoferizovic/senator/database"
 	"github.com/teoferizovic/senator/model"
 	"time"
 )
@@ -33,4 +35,28 @@ func CreateToken(requestUser model.User) (string,error){
 
 	return tokenString, nil
 
+}
+
+func AddTokenToBlackList(token string) error {
+
+	err := database.Redis.Set(token, true, 30*time.Minute).Err()
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GetTokenFromBlackList(token string) (bool, error) {
+
+	_, err := database.Redis.Get(token).Result()
+
+	if err == redis.Nil {
+		return false,nil
+	} else if err != nil {
+		return false,err
+	}
+
+	return true, nil
 }
