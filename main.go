@@ -3,18 +3,33 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis"
+	"github.com/teoferizovic/senator/config"
 	"github.com/teoferizovic/senator/database"
 	"github.com/teoferizovic/senator/routes"
-	"gorm.io/gorm"
 	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"strconv"
 )
 
 func init() {
 
 	var err error
 
+	//db variables
+	dbHost := config.GetEnvData("DB_HOST")
+	dbUser := config.GetEnvData("DB_USER")
+	dbPass := config.GetEnvData("DB_PASSWORD")
+	dbPort := config.GetEnvData("DB_PORT")
+	dbName := config.GetEnvData("DB_NAME")
+
+	//redis variables
+	redisHost := config.GetEnvData("REDIS_HOST")
+	redisPort := config.GetEnvData("REDIS_PORT")
+	redisPassword := config.GetEnvData("REDIS_PASSWORD")
+	redisDbNum, _ := strconv.Atoi(config.GetEnvData("REDIS_DB_NUMBER"))
+
 	//mysql connection
-	dsn := "root:root@tcp(127.0.0.1:3306)/proba?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := dbUser+":"+dbPass+"@tcp("+dbHost+":"+dbPort+")/"+dbName+"?charset=utf8mb4&parseTime=True&loc=Local"
 	database.DBCon, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	if err != nil {
@@ -23,9 +38,9 @@ func init() {
 
 	//redis connection
 	database.Redis = redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379", // host:port of the redis server
-		Password: "", // no password set
-		DB:       7,  // use default DB
+		Addr:     redisHost+":"+redisPort, // host:port of the redis server
+		Password: redisPassword, // no password set
+		DB:       redisDbNum,
 	})
 
 }
@@ -36,7 +51,8 @@ func main() {
 
 	routes.Routes(router)
 
-	router.Run(":8066")
+	router.Run(":"+config.GetEnvData("APP_PORT"))
+
 }
 
 
