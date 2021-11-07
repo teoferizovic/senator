@@ -6,9 +6,11 @@ import (
 	"github.com/teoferizovic/senator/config"
 	"github.com/teoferizovic/senator/database"
 	"github.com/teoferizovic/senator/routes"
+	"github.com/teoferizovic/senator/service"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"strconv"
+	//"github.com/sirupsen/logrus"
 )
 
 func init() {
@@ -47,6 +49,8 @@ func init() {
 
 func main() {
 
+	service.InitiLogger()
+
 	router := gin.Default()
 
 	routes.Routes(router)
@@ -54,6 +58,5 @@ func main() {
 	router.Run(":"+config.GetEnvData("APP_PORT"))
 
 }
-
 
 

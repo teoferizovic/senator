@@ -6,6 +6,7 @@ import (
 	"github.com/teoferizovic/senator/service"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
+	log "github.com/sirupsen/logrus"
 )
 
 func UserRegister(ctx *gin.Context) {
@@ -38,7 +39,8 @@ func UserRegister(ctx *gin.Context) {
 }
 
 func UserLogin(ctx *gin.Context) {
-
+	//log.Printf("login ide")
+	log.Info("hello, world!")
 	var requestUser model.User
 
 	//check if right credeitals are sent
