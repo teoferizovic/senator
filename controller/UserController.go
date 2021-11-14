@@ -2,11 +2,11 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"github.com/teoferizovic/senator/model"
 	"github.com/teoferizovic/senator/service"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
-	log "github.com/sirupsen/logrus"
 )
 
 func UserRegister(ctx *gin.Context) {
@@ -39,8 +39,7 @@ func UserRegister(ctx *gin.Context) {
 }
 
 func UserLogin(ctx *gin.Context) {
-	//log.Printf("login ide")
-	log.Info("hello, world!")
+
 	var requestUser model.User
 
 	//check if right credeitals are sent
@@ -90,6 +89,9 @@ func UserLogin(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Token for user is:" + tokenString,
 	})
+
+	log.Info("Successfuly logged in, user:"+requestUser.Email)
+
 	return
 
 }
@@ -111,6 +113,9 @@ func UserLogout(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Logged out",
 	})
+
+	log.Info("Successfuly logged out")
+
 	return
 }
 
