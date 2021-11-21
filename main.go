@@ -5,6 +5,7 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/teoferizovic/senator/config"
 	"github.com/teoferizovic/senator/database"
+	"github.com/teoferizovic/senator/database/migration"
 	"github.com/teoferizovic/senator/routes"
 	"github.com/teoferizovic/senator/service"
 	"gorm.io/driver/mysql"
@@ -47,6 +48,9 @@ func init() {
 
 	//init logger
 	service.InitiLogger()
+
+	//execute migration
+	migration.Migrate()
 
 }
 
