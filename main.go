@@ -45,11 +45,12 @@ func init() {
 		DB:       redisDbNum,
 	})
 
+	//init logger
+	service.InitiLogger()
+
 }
 
 func main() {
-
-	service.InitiLogger()
 
 	router := gin.Default()
 
