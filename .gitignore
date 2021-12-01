@@ -1,3 +1,5 @@
 .env
 .idea/
 storage/logs
+docker/db
+main
