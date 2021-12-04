@@ -53,8 +53,12 @@ services:
     # This is what makes the hot reloading work inside of a Docker container
     volumes:
       - .:/app/
-
-networks:
-  default:
-volumes:
-  mysql_data:
+  redis:
+    image: redis
+    container_name: senator_redis
+    ports:
+      - 9992:6379
+    volumes:
+      - ./docker/db/redis_data:/data
+    networks:
+      - default
