@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/teoferizovic/senator/database"
@@ -10,14 +11,14 @@ import (
 )
 
 type User struct {
-	gorm.Model
-	ID uint `gorm:"column:ID;primary_key:auto_increment"`
+	//gorm.Model
+	ID int `gorm:"column:id;primary_key:auto_increment"`
 	Email string `gorm:"column:email" json:"email" validate:"min=1,max=16,regexp=^[a-zA-Z]*$" binding:"required"`
 	Password string `gorm:"column:password" json:"password" validate:"min=1,max=16" binding:"required"`
 	Active bool `gorm:"column:active;default:0"`
-	CreatedAt time.Time `gorm:"column:created_at;default:CURRENT_TIMESTAMP" json:"created_at"`
-	UpdatedAt time.Time `gorm:"column:updated_at;default:CURRENT_TIMESTAMP" json:"updated_at"`
-	DeletedAt time.Time `gorm:"column:deleted_at;default:null" json:"deleted_at"`
+	CreatedAt time.Time `gorm:"type:timestamp;column:created_at;default:CURRENT_TIMESTAMP" json:"created_at"`
+	UpdatedAt time.Time `gorm:"type:timestamp;column:updated_at;default:CURRENT_TIMESTAMP" json:"updated_at"`
+	Articles []*Article `json:",omitempty"`
 }
 
 //create user
@@ -54,6 +55,23 @@ func GetUsers() *gorm.DB {
 		fmt.Println(users)
 	}
 	return database.DBCon
+}
+
+//find user by user id
+func GetByUserId(id string) (error error, user User) {
+
+	var resultUser User
+
+	err := database.DBCon.Preload("Articles").Where("id = ?", id).First(&resultUser).Error
+
+	errors.Is(err, gorm.ErrRecordNotFound)
+
+	if err != nil {
+		return err, resultUser
+	}
+
+	return nil, resultUser
+
 }
 
 // BeforeSave : hook before a user is saved

@@ -53,8 +53,8 @@ func UserLogin(ctx *gin.Context) {
 	//check if user with email exits
 	resultUser := model.GetByEmail(&requestUser)
 
-	if (model.User{}) == resultUser {
-		ctx.JSON(http.StatusBadRequest, gin.H{
+	if (model.User{}.Email == resultUser.Email) {
+		ctx.JSON(http.StatusNotFound, gin.H{
 			"message": "No user with email:" + requestUser.Email,
 		})
 		return
@@ -64,14 +64,14 @@ func UserLogin(ctx *gin.Context) {
 	err := bcrypt.CompareHashAndPassword([]byte(resultUser.Password), []byte(requestUser.Password))
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
+		ctx.JSON(http.StatusNotFound, gin.H{
 			"message": "Wrong credentials",
 		})
 		return
 	}
 
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{
+		ctx.JSON(http.StatusNotFound, gin.H{
 			"message": "Wrong credentials",
 		})
 		return
@@ -119,10 +119,31 @@ func UserLogout(ctx *gin.Context) {
 	return
 }
 
-func UserIndex(ctx *gin.Context) {
+func UserTest(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"message": "Index",
+	})
+	return
+
+}
+
+func UserIndex(ctx *gin.Context) {
+
+	id := ctx.Param("id")
+
+	//check if user with id exits
+	err, resultUser := model.GetByUserId(id)
+
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"message": "No user with id:" + id,
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"data": resultUser,
 	})
 	return
 
