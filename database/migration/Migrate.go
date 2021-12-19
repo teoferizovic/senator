@@ -6,5 +6,5 @@ import (
 )
 
 func Migrate()  {
-	database.DBCon.AutoMigrate(&model.User{}, &model.Article{})
+	database.DBCon.AutoMigrate(&model.User{}, &model.Article{}, &model.Comment{})
 }

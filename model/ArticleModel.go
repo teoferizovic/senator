@@ -1,86 +1,61 @@
 package model
 
 import (
-	"errors"
 	"github.com/teoferizovic/senator/database"
-	"gorm.io/gorm"
 	"time"
 )
 
 type Article struct {
 	ID int `gorm:"column:id;primary_key:auto_increment"`
-	UserID int `gorm:"column:user_id" json:"user_id"`
-	Headline string `gorm:"column:headline" json:"headline"`
-	Content string `gorm:"type:text;column:content" json:"content"`
+	UserID int `gorm:"column:user_id;not null" json:"user_id"`
+	CommentID int `gorm:"column:comment_id" json:"comment_id"`
+	Headline string `gorm:"type:text;column:headline;not null" json:"headline"`
+	Content string `gorm:"type:text;column:content;not null" json:"content"`
 	CreatedAt  time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP;column:created_at;" json:"created_at"`
 	UpdatedAt  time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP;column:updated_at;" json:"updated_at"`
 	User *User `json:",omitempty"`
+	Comment *Comment `json:",omitempty"`
 }
 
 //get all articles
-func GetArticles() (error error, articles []Article) {
+func GetArticles(articles *[]Article) (err error) {
 
-	var resultArticles []Article
-
-	err := database.DBCon.Preload("User").Find(&resultArticles).Error
-
-	errors.Is(err, gorm.ErrRecordNotFound)
-
-	if err != nil {
-		return err, resultArticles
+	if err := database.DBCon.Preload("User").Find(&articles).Error; err != nil {
+		return err
 	}
-
-	return nil, resultArticles
+	return nil
 
 }
 
 //find Article by id
-func GetArticleById(id string) (error error, articles []Article) {
+func GetArticleById(articles *[]Article, id string) (err error) {
 
-	var resultArticles []Article
-
-	err := database.DBCon.Preload("User").Where("id = ?", id).Find(&resultArticles).Error
-
-	errors.Is(err, gorm.ErrRecordNotFound)
-
-	if err != nil {
-		return err, resultArticles
+	if err := database.DBCon.Preload("User").Where("id = ?", id).Find(&articles).Error; err != nil {
+		return err
 	}
 
-	return nil, resultArticles
+	return nil
 
 }
 
 //find Article by user_id
-func GetArticleByUserId(userId string) (error error, articles []Article) {
+func GetArticleByUserId(articles *[]Article, userId string) (err error) {
 
-	var resultArticles []Article
-
-	err := database.DBCon.Preload("User").Where("user_id = ?", userId).Find(&resultArticles).Error
-
-	errors.Is(err, gorm.ErrRecordNotFound)
-
-	if err != nil {
-		return err, resultArticles
+	if err := database.DBCon.Preload("User").Where("user_id = ?", userId).Find(&articles).Error; err != nil {
+		return err
 	}
 
-	return nil, resultArticles
+	return nil
 
 }
 
 //find Article by user_id
-func GetArticleByIdAndUserId(id string, userId string) (error error, articles []Article) {
+func GetArticleByIdAndUserId(articles *[]Article, id string, userId string) (error error) {
 
-	var resultArticles []Article
-
-	err := database.DBCon.Preload("User").Where("id = ? AND user_id = ?", id, userId).Find(&resultArticles).Error
-
-	errors.Is(err, gorm.ErrRecordNotFound)
-
-	if err != nil {
-		return err, resultArticles
+	if err := database.DBCon.Preload("User").Where("id = ? AND user_id = ?", id, userId).Find(&articles).Error; err != nil {
+		return err
 	}
 
-	return nil, resultArticles
+	return nil
 
 }
