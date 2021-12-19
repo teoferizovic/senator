@@ -8,13 +8,12 @@ import (
 type Article struct {
 	ID int `gorm:"column:id;primary_key:auto_increment"`
 	UserID int `gorm:"column:user_id;not null" json:"user_id"`
-	CommentID int `gorm:"column:comment_id" json:"comment_id"`
 	Headline string `gorm:"type:text;column:headline;not null" json:"headline"`
 	Content string `gorm:"type:text;column:content;not null" json:"content"`
 	CreatedAt  time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP;column:created_at;" json:"created_at"`
 	UpdatedAt  time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP;column:updated_at;" json:"updated_at"`
 	User *User `json:",omitempty"`
-	Comment *Comment `json:",omitempty"`
+	Comments []*Comment `json:",omitempty"`
 }
 
 //get all articles

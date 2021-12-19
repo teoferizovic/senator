@@ -19,6 +19,7 @@ type User struct {
 	CreatedAt time.Time `gorm:"type:timestamp;column:created_at;default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAt time.Time `gorm:"type:timestamp;column:updated_at;default:CURRENT_TIMESTAMP" json:"updated_at"`
 	Articles []*Article `json:",omitempty"`
+	Comments []*Comment `json:",omitempty"`
 }
 
 //create user
