@@ -19,7 +19,7 @@ type Article struct {
 //get all articles
 func GetArticles(articles *[]Article) (err error) {
 
-	if err := database.DBCon.Preload("User").Find(&articles).Error; err != nil {
+	if err := database.DBCon.Preload("User").Preload("Comments").Find(&articles).Error; err != nil {
 		return err
 	}
 	return nil

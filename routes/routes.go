@@ -30,5 +30,10 @@ func Routes(router *gin.Engine){
 		article.GET("/index",controller.ArticleIndex)
 	}
 
+	//routes for comments
+	comment := router.Group("/comment", middleware.AuthMiddleware())
+	{
+		comment.GET("/index",controller.CommentIndex)
+	}
 }
 

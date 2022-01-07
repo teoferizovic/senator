@@ -63,7 +63,7 @@ func GetByUserId(id string) (error error, user User) {
 
 	var resultUser User
 
-	err := database.DBCon.Preload("Articles").Where("id = ?", id).First(&resultUser).Error
+	err := database.DBCon.Preload("Articles").Preload("Comments").Where("id = ?", id).First(&resultUser).Error
 
 	errors.Is(err, gorm.ErrRecordNotFound)
 
