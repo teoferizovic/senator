@@ -25,7 +25,7 @@ func Routes(router *gin.Engine){
 	}
 
 	//routes for articles
-	article := router.Group("/article")
+	article := router.Group("/article", middleware.AuthMiddleware())
 	{
 		article.GET("/index",controller.ArticleIndex)
 	}
