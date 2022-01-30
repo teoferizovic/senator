@@ -13,7 +13,7 @@ import (
 type User struct {
 	//gorm.Model
 	ID int `gorm:"column:id;primary_key:auto_increment"`
-	Email string `gorm:"column:email" json:"email" validate:"min=1,max=16,regexp=^[a-zA-Z]*$" binding:"required"`
+	Email string `gorm:"unique;column:email" json:"email" validate:"min=1,max=16,regexp=^[a-zA-Z]*$" binding:"required"`
 	Password string `gorm:"column:password" json:"password" validate:"min=1,max=16" binding:"required"`
 	Active bool `gorm:"column:active;default:0"`
 	CreatedAt time.Time `gorm:"type:timestamp;column:created_at;default:CURRENT_TIMESTAMP" json:"created_at"`
@@ -75,7 +75,7 @@ func GetByUserId(id string) (error error, user User) {
 
 }
 
-// BeforeSave : hook before a user is saved
+// BeforeCreate : hook before a user is saved
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 
 	hash, err := MakePassword(u.Password)
@@ -83,6 +83,13 @@ func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 		return nil
 	}
 	u.Password = hash
+	return nil
+}
+
+// AfterCreate : hook after a user is saved
+func (u *User) AfterCreate(tx *gorm.DB) (err error) {
+
+	tx.Model(u).Update("active", "1")
 	return nil
 }
 
