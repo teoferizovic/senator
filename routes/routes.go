@@ -16,6 +16,7 @@ func Routes(router *gin.Engine){
 		user.PUT("/logout", controller.UserLogout)
 		user.GET("/test",middleware.AuthMiddleware(), controller.UserTest)
 		user.GET("/index/:id", controller.UserIndex)
+		user.GET("/ws", controller.UserSubscribe)
 	}
 
 	//routes for posts

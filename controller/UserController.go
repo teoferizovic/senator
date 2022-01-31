@@ -2,12 +2,19 @@ package controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 	log "github.com/sirupsen/logrus"
 	"github.com/teoferizovic/senator/model"
 	"github.com/teoferizovic/senator/service"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 )
+
+// this will require a Read and Write buffer size
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
+}
 
 func UserRegister(ctx *gin.Context) {
 
@@ -30,6 +37,8 @@ func UserRegister(ctx *gin.Context) {
 		})
 		return
 	}
+
+	service.PublishData(newUser.Email)
 
 	//return 200
 	ctx.JSON(http.StatusCreated, gin.H{
@@ -146,5 +155,37 @@ func UserIndex(ctx *gin.Context) {
 		"data": resultUser,
 	})
 	return
+
+}
+
+func UserSubscribe(ctx *gin.Context) {
+
+	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
+
+	// upgrade this connection to a WebSocket
+	ws, err := upgrader.Upgrade(ctx.Writer, ctx.Request, nil)
+	if err != nil {
+		log.Println(err)
+	}
+
+	log.Println("Client Connected")
+
+	subscriber := service.SubsribeData()
+
+	for {
+
+		msg, err := subscriber.ReceiveMessage()
+
+		if err != nil {
+			panic(err)
+		}
+
+		err = ws.WriteMessage(1, []byte(msg.Payload))
+
+		if err != nil {
+			log.Println(err)
+		}
+
+	}
 
 }
