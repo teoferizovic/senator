@@ -170,6 +170,13 @@ func UserSubscribe(ctx *gin.Context) {
 
 	log.Println("Client Connected")
 
+	go wsWriter(ws)
+
+
+}
+
+func wsWriter(ws *websocket.Conn){
+
 	subscriber := service.SubsribeData()
 
 	for {
@@ -183,9 +190,8 @@ func UserSubscribe(ctx *gin.Context) {
 		err = ws.WriteMessage(1, []byte(msg.Payload))
 
 		if err != nil {
-			log.Println(err)
+			panic(err)
 		}
 
 	}
-
 }
