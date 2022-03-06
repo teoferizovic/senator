@@ -1,7 +1,9 @@
 package routes
 
 import (
+	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
+	"gopkg.in/olahol/melody.v1"
 	"github.com/teoferizovic/senator/controller"
 	"github.com/teoferizovic/senator/middleware"
 )
@@ -36,5 +38,18 @@ func Routes(router *gin.Engine){
 	{
 		comment.GET("/index",controller.CommentIndex)
 	}
+
+	//routes for chat
+	m := melody.New()
+
+	router.Use(static.Serve("/chat", static.LocalFile("./public", true)))
+
+	router.GET("/chat/ws2", func(c *gin.Context) {
+		m.HandleRequest(c.Writer, c.Request)
+	})
+
+	m.HandleMessage(func(s *melody.Session, msg []byte) {
+		m.Broadcast(msg)
+	})
 }
 
